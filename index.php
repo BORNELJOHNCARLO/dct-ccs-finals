@@ -7,6 +7,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title></title>
 </head>
+<?php 
+session_start();
+include 'functions.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Capture user input
+    $inputEmail = $_POST['email'];
+    $inputPassword = md5($_POST['password']); // Hash the password with MD5
+
+    // Establish database connection
+    $databaseConnection = dbConnect();
+    $preparedQuery = $databaseConnection->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+    $preparedQuery->bind_param("ss", $inputEmail, $inputPassword);
+    $preparedQuery->execute();
+    $queryResult = $preparedQuery->get_result();
+
+    if ($queryResult->num_rows > 0) {
+        $_SESSION['loggedInUser'] = $inputEmail; // Store session data
+        header("Location: admin/dashboard.php"); // Redirect to the dashboard
+        exit();
+    } else {
+        $loginErrorMessage = "Invalid email or password!";
+    }
+    $preparedQuery->close();
+    $databaseConnection->close();
+}
+?>
 
 <body class="bg-secondary-subtle">
     <div class="d-flex align-items-center justify-content-center vh-100">
@@ -27,7 +54,8 @@
                         <div class="form-floating mb-3">
                             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
                         </div>
-                    </form>
+                    </form>.
+                    <?php if (isset($error)) echo "<p>$error</p>"; ?>
                 </div>
             </div>
         </div>
