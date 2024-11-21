@@ -6,6 +6,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 include 'partials/header.php'; // Include header here
+include 'partials/side-bar.php';
 ?>
 <!-- Template Files here -->
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-5">    
@@ -47,3 +48,6 @@ include 'partials/header.php'; // Include header here
     </div>    
 </main>
 <!-- Template Files here -->
+<?php 
+ include 'partials/footer.php'; // Include footer 
+?>
